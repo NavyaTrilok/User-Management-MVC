@@ -1,0 +1,130 @@
+// controllers/userController.js
+
+function isEmailValid(email) {
+    // Use a regular expression to validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function isPasswordValid(password) {
+    // Implement your password complexity requirements here
+    // For example, require a minimum length of 8 characters
+    return password.length >= 8;
+}
+
+const UserController = {
+
+    
+    registerUser(req, res) {
+        // Handle user registration logic here
+        const { username, email, password, confirmedPassword } = req.body;
+
+    // Validation checks
+    if (!username || !email || !password || !confirmedPassword) {
+        return res.render('register', { errorMessage: 'All fields are required' });
+    }
+
+    if (!isEmailValid(email)) {
+        return res.render('register', { errorMessage: 'Invalid email format' });
+    }
+
+    if (!isPasswordValid(password)) {
+        return res.render('register', { errorMessage: 'Password must be at least 8 characters long' });
+    }
+
+    if (users.some((user) => user.username === username)) {
+        return res.render('register', { errorMessage: 'Username already exists' });
+    }
+
+    if (users.some((user) => user.email === email)) {
+        return res.render('register', { errorMessage: 'Email address is already registered' });
+    }
+
+    if (password !== confirmedPassword) {
+        return res.render('register', { errorMessage: 'Passwords do not match' });
+    }
+
+    // Create a new User instance
+    const newUser = new User(username, email, password);
+
+    // Add the new user to the users array
+    users.push(newUser);
+
+    // Redirect to the login page after successful registration
+    res.redirect('/login');
+
+        res.send('User registered successfully');
+    },
+    
+    loginUser(req, res) {
+            // Handle user login logic here
+            const { username, password } = req.body;
+
+    // Replace this with your actual user authentication logic
+    const validUser = users.find((user) => user.username === username && user.password === password);
+
+    if (!validUser) {
+        return res.render('login', { errorMessage: 'Invalid username or password' });
+    }
+
+    // Set a session or token to maintain the authenticated state
+    // Example using Express session (install 'express-session' package)
+    req.session.user = validUser;
+
+    res.redirect('/menu'); // Redirect to a dashboard or other authenticated route
+        res.send('User logged in successfully');
+    },
+
+    updateUser(req, res) {
+        // Handle updating user information logic here
+        const { newUsername, newEmail } = req.body;
+        console.log(req.body);
+        console.log(newUsername)
+        console.log(newEmail)
+        // Validation checks for new username and email
+        if (!newUsername || !newEmail) {
+            return res.render('update-info', { errorMessage: 'All fields are required' });
+        }
+      
+        if (users.some((user) => user.username === newUsername)) {
+            return res.render('update-info', { errorMessage: 'Username already exists' });
+        }
+      
+        if (users.some((user) => user.email === newEmail)) {
+            return res.render('update-info', { errorMessage: 'Email address is already registered' });
+        }
+      
+        
+        const userToUpdate = req.session.user; // Get the authenticated user
+        userToUpdate.username = newUsername;
+        userToUpdate.email = newEmail;
+        res.send('Information Updated');
+        res.send('User information updated successfully');
+    },
+    updatePassword(req, res) {
+        // Handle updating the user's password logic here
+        const { currentPassword, newPassword } = req.body;
+
+        // Replace this with your actual user authentication logic
+        const validUser = users.find((user) => user.username === req.session.user.username && user.password === currentPassword);
+      
+        if (!validUser) {
+            return res.render('update-password', { errorMessage: 'Invalid current password' });
+        }
+      
+        // Implement complexity requirements for the new password
+        // Example: Ensure the new password is at least 8 characters long
+        if (newPassword.length < 8) {
+            return res.render('update-password', { errorMessage: 'New password must be at least 8 characters long' });
+        }
+      
+        
+        validUser.password = newPassword;
+        console.log(newPassword);
+        res.send('Password Updated');
+      
+        res.send('Password updated successfully');
+    },
+};
+
+module.exports = UserController;

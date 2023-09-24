@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User Information</title>
+</head>
+<body>
+    <h1>Update User Information</h1>
+    <% if (errorMessage) { %>
+        <p style="color: red;"><%= errorMessage %></p>
+    <% } %>
+    <form action="/update-info" method="POST">
+        <label for="newUsername">New Username:</label>
+        <input type="text" id="newUsername" name="newUsername" required><br>
+
+        <label for="newEmail">New Email:</label>
+        <input type="email" id="newEmail" name="newEmail" required><br>
+
+        <input type="submit" value="Update">
+    </form>
+</body>
+</html>
